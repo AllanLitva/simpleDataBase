@@ -1,0 +1,91 @@
+
+
+#include <stdio.h>
+exec sql include sqlca;
+exec sql begin declare section;
+  char sqlstmt[1024];
+  char *MYID= "fedora/oracle";
+exec sql end declare section;
+
+int main(){
+  exec sql connect :MYID;
+  if (sqlca.sqlcode == 0)
+      printf("Connected to ORACLE\n");
+  else
+      printf("Connect Failed\n");
+      
+      
+       
+
+/*  create table supplier 	*/
+  strcpy(sqlstmt, "create table supplier (s# char(4),sname varchar2(10),status  int,city varchar2(20),primary key (s#))");
+
+  exec sql set transaction read write;
+  exec sql execute immediate :sqlstmt;
+  if (sqlca.sqlcode == 0)
+      printf("Table supplier created \n");    
+  else
+      printf("Table supplier not created\n");
+     
+ 
+ 
+ 
+/* create table part  */
+  strcpy(sqlstmt, "create table part (p# char(4),pname varchar2(10),color varchar2(10),weight  float, city varchar2(20),primary key (p#))");
+
+  exec sql set transaction read write;
+  exec sql execute immediate :sqlstmt;
+  if (sqlca.sqlcode == 0)
+      printf("Table part created \n");    
+  else
+      printf("Table part not created\n");    
+     
+     
+     
+     
+     
+/* create table SP  */
+  strcpy(sqlstmt, "create table SP (s# char(4),p# char(4),QTY  int,primary key (s#,p#),foreign key (s#) references supplier (s#),foreign key (p#) references part (p#))");
+
+  exec sql set transaction read write;
+  exec sql execute immediate :sqlstmt;
+  if (sqlca.sqlcode == 0)
+      printf("Table SP created \n");    
+  else
+      printf("Table SP not created\n");    
+     
+          
+    
+     
+      
+/*  drop table SP 	*/
+  exec sql execute immediate "drop table SP";
+  if (sqlca.sqlcode == 0)
+      printf("Table dropped \n");    
+  else
+      printf("Table not dropped \n");      
+           
+         
+     
+/*  drop table supplier 	*/
+  exec sql execute immediate "drop table supplier";
+  if (sqlca.sqlcode == 0)
+      printf("Table dropped \n");    
+  else
+      printf("Table not dropped \n");  
+      
+      
+      
+/*  drop table part */
+  exec sql execute immediate "drop table part";
+  if (sqlca.sqlcode == 0)
+      printf("Table dropped \n");    
+  else
+      printf("Table not dropped \n");      
+      
+      
+   
+  exec sql commit release;
+  exit(0);
+}
+
